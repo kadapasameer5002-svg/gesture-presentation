@@ -35,7 +35,7 @@
                 slide.classList.remove('active');
             }
         });
-        slideCounter.textContent = ${currentSlide + 1} / ;
+        slideCounter.textContent = `${currentSlide + 1} / ${totalSlides}`;
     }
 
     function nextSlide() {
@@ -76,7 +76,6 @@
 
         // Thumb (horizontal)
         // Note: x-axis might be inverted depending on camera flip. 
-        // In original code: landmark[4].x < landmark[3].x
         if (landmarks[tips[0]].x < landmarks[tips[0] - 1].x) {
             fingers.push(1);
         } else {
@@ -149,32 +148,38 @@
         systemStatus.textContent = "INITIALIZING...";
         gestureText.textContent = "Loading Models...";
         
-        hands = new Hands({locateFile: (file) => {
-            return https://cdn.jsdelivr.net/npm/@mediapipe/hands/;
-        }});
-        
-        hands.setOptions({
-            maxNumHands: 1,
-            modelComplexity: 1,
-            minDetectionConfidence: 0.7,
-            minTrackingConfidence: 0.7
-        });
-        
-        hands.onResults(onResults);
-        
-        camera = new Camera(videoElement, {
-            onFrame: async () => {
-                await hands.send({image: videoElement});
-            },
-            width: 320,
-            height: 240
-        });
-        
-        await camera.start();
-        
-        systemStatus.textContent = "SYSTEM ONLINE";
-        statusDot.classList.add('active');
-        stopBtn.disabled = false;
+        try {
+            hands = new Hands({locateFile: (file) => {
+                return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
+            }});
+            
+            hands.setOptions({
+                maxNumHands: 1,
+                modelComplexity: 1,
+                minDetectionConfidence: 0.7,
+                minTrackingConfidence: 0.7
+            });
+            
+            hands.onResults(onResults);
+            
+            camera = new Camera(videoElement, {
+                onFrame: async () => {
+                    await hands.send({image: videoElement});
+                },
+                width: 320,
+                height: 240
+            });
+            
+            await camera.start();
+            
+            systemStatus.textContent = "SYSTEM ONLINE";
+            statusDot.classList.add('active');
+            stopBtn.disabled = false;
+        } catch (error) {
+            console.error(error);
+            systemStatus.textContent = "ERROR: " + error.message;
+            startBtn.disabled = false;
+        }
     }
 
     function terminateSystem() {
