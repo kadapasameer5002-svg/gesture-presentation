@@ -39,3 +39,5 @@ Since this uses a Flask web server, it is ready to be deployed to Render.com.
 7. Render will build and deploy the app. Once it says "Live", click the provided https://...onrender.com URL to view your presentation!
 
 > **Note on Permissions:** Web browsers require HTTPS or localhost to access the webcam. Render automatically provides an HTTPS URL, so it will work perfectly online.
+gesture presentation render live link :
+https://gesture-presentation.onrender.com
